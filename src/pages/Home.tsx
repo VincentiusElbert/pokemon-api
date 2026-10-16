@@ -1,54 +1,80 @@
-import Navbar from "./navbar";
+import { useCallback, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import pokemonTitle from "../assets/pokemon-title.svg";
-import { Search } from "lucide-react";
-import { ListPokemon } from "./list-pokemon";
+import SearchBar from "../components/SearchBar";
+import { useAsync } from "../hooks/use-async";
+import { getIndex } from "../services/api";
 import Footer from "./footer";
+import { ListPokemon, type Filters } from "./list-pokemon";
+import Navbar from "./navbar";
+
+const SORTS: Filters["sort"][] = ["id-asc", "id-desc", "name-asc", "name-desc"];
+
+// Filters live in the URL, so a filtered view can be shared and survives the back button
+function readFilters(params: URLSearchParams): Filters {
+  const sort = params.get("sort") as Filters["sort"];
+  const gen = Number(params.get("gen"));
+  return {
+    q: params.get("q") ?? "",
+    types: params.get("type")?.split(",").filter(Boolean) ?? [],
+    gen: gen >= 1 && gen <= 9 ? gen : null,
+    sort: SORTS.includes(sort) ? sort : "id-asc",
+    favorites: params.get("fav") === "1",
+  };
+}
 
 const Home = () => {
+  const [params, setParams] = useSearchParams();
+  const filters = useMemo(() => readFilters(params), [params]);
+  const index = useAsync(getIndex, []);
+
+  const update = useCallback(
+    (patch: Partial<Filters>) => {
+      const next = { ...filters, ...patch };
+      const p = new URLSearchParams();
+      if (next.q) p.set("q", next.q);
+      if (next.types.length) p.set("type", next.types.join(","));
+      if (next.gen) p.set("gen", String(next.gen));
+      if (next.sort !== "id-asc") p.set("sort", next.sort);
+      if (next.favorites) p.set("fav", "1");
+      setParams(p, { replace: true });
+    },
+    [filters, setParams],
+  );
+
+  const reset = useCallback(() => setParams(new URLSearchParams(), { replace: true }), [setParams]);
+
   return (
     <>
-      {/* Hero Section */}
+      {/* Hero */}
       <div
-        className="bg-accent-yellow relative overflow-hidden pb-52"
-        style={{
-          backgroundImage: "url('background-hero.png')",
-          backgroundRepeat: "repeat",
-        }}
+        className="relative bg-accent-yellow pb-52"
+        style={{ backgroundImage: "url('/background-hero.png')", backgroundRepeat: "repeat" }}
       >
         <Navbar />
 
-        <div className=" flex flex-col items-center justify-center text-center pt-36 gap-3.5 max-w-[686px] mx-auto px-4">
-          <div>
-            <img src={pokemonTitle} alt="Pokemon Title" />
-          </div>
-          <h1 className="text-display-sm md:text-display-2xl text-neutral-900 font-bold">Discover the Most Powerful Pokémon in the Wild!</h1>
-          <p className="text-sm md:text-md font-medium text-neutral-800">Train, Battle, and Collect Your Favorites!</p>
+        <div className="mx-auto flex max-w-[686px] flex-col items-center justify-center gap-3.5 px-4 pt-36 text-center">
+          <img src={pokemonTitle} alt="Pokémon" className="animate-[fade-up_0.5s_ease-out_both]" />
+          <h1 className="animate-[fade-up_0.5s_0.1s_ease-out_both] text-display-sm font-bold text-neutral-900 md:text-display-2xl">
+            Discover the Most Powerful Pokémon in the Wild!
+          </h1>
+          <p className="animate-[fade-up_0.5s_0.2s_ease-out_both] text-sm font-medium text-neutral-800 md:text-md">
+            Search all {index.data ? index.data.entries.length.toLocaleString("en-US") : "1,025"} Pokémon by name,
+            number or type.
+          </p>
         </div>
 
-        {/* Search Bar */}
-        <div className="flex justify-center mt-10 px-4">
-          <div className="relative w-full max-w-md">
-            <input
-              type="text"
-              placeholder="Search Pokemon"
-              className="w-full bg-white text-neutral-700 py-3.5 pl-6 pr-12 border border-neutral-300 rounded-full focus:outline-none focus:ring-2 focus:ring-accent-yellow placeholder:text-neutral-400"
-            />
-            <button className="absolute right-2 top-1/2 -translate-y-1/2 h-9 w-9 flex items-center justify-center bg-blue-500 rounded-full hover:bg-blue-600 transition">
-              <Search className="text-white w-4 h-4" />
-            </button>
-          </div>
+        <div className="relative z-30 mt-10 flex justify-center px-4">
+          <SearchBar entries={index.data?.entries ?? null} value={filters.q} onSearch={(q) => update({ q })} />
         </div>
 
-        {/* Cloud + Decorations */}
-        <div className="absolute bottom-0 left-0 w-full z-10">
-          {/* Cloud */}
-          <img src="../cloud-1.png" alt="cloud" className="w-full object-cover" />
-
-          {/* Pokemon Dekorasi */}
+        {/* Cloud + decorations */}
+        <div className="pointer-events-none absolute bottom-0 left-0 z-10 w-full overflow-hidden">
+          <img src="/cloud-1.png" alt="" className="w-full object-cover" />
           <img
-            src="../pokemon-1.png"
-            alt="Charizard"
-            className="absolute bottom-0 left-4 md:left-20 -z-1"
+            src="/pokemon-1.png"
+            alt=""
+            className="absolute bottom-0 -z-10 animate-[float_6s_ease-in-out_infinite]"
             style={{
               width: "clamp(10.06rem, 19.2vw, 17.38rem)",
               height: "clamp(10.06rem, 19.2vw, 17.38rem)",
@@ -56,9 +82,9 @@ const Home = () => {
             }}
           />
           <img
-            src="../pokemon-2.png"
-            alt="Pikachu"
-            className="absolute bottom-0 right-4 md:right-20 -z-1 "
+            src="/pokemon-2.png"
+            alt=""
+            className="absolute bottom-0 -z-10 animate-[float_6s_1.5s_ease-in-out_infinite]"
             style={{
               width: "clamp(10.06rem, 19.2vw, 17.38rem)",
               height: "clamp(10.06rem, 19.2vw, 17.38rem)",
@@ -68,12 +94,18 @@ const Home = () => {
         </div>
       </div>
 
-      {/* List Section */}
-      <div className="bg-white relative z-20 px-4 md:px-10 pb-20 pt-8">
-        <ListPokemon />
+      {/* List */}
+      <div className="relative z-20 bg-white px-4 pb-20 pt-8 md:px-10">
+        <ListPokemon
+          entries={index.data?.entries ?? null}
+          error={index.error}
+          onRetry={index.retry}
+          filters={filters}
+          onChange={update}
+          onReset={reset}
+        />
       </div>
 
-      {/* Footer Section */}
       <Footer />
     </>
   );

@@ -1,0 +1,15 @@
+# dependencies
+node_modules
+
+# build output
+dist
+*.tsbuildinfo
+
+# env files
+.env*.local
+
+# logs and editor files
+*.log
+.DS_Store
+.vscode/*
+!.vscode/extensions.json

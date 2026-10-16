@@ -1,23 +1,29 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import logo from "../assets/logo-pokemon.svg";
 
-const Navbar = () => {
+// `solid` keeps a white bar on pages without the yellow hero behind it
+const Navbar = ({ solid = false }: { solid?: boolean }) => {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 0);
-    };
-
-    window.addEventListener("scroll", handleScroll);
+    const handleScroll = () => setIsScrolled(window.scrollY > 0);
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
-    <div className={`flex items-center justify-center gap-2 p-4 fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-white shadow" : "bg-transparent"}`}>
-      <img src={logo} alt="Pokemon Logo" className="h-8 md:h-10" />
-      <div className="text-neutral-900 text-[19px] md:text-[28px] font-bold">Pokedex</div>
-    </div>
+    <header
+      className={`fixed left-0 right-0 top-0 z-50 flex items-center justify-center p-4 transition-all duration-300 ${
+        isScrolled || solid ? "bg-white/90 shadow-sm backdrop-blur" : "bg-transparent"
+      }`}
+    >
+      <Link to="/" className="flex items-center gap-2" aria-label="Pokédex home">
+        <img src={logo} alt="" className="h-8 md:h-10" />
+        <span className="text-[19px] font-bold text-neutral-900 md:text-[28px]">Pokédex</span>
+      </Link>
+    </header>
   );
 };
 

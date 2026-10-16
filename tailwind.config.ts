@@ -25,7 +25,7 @@ const fontWeights = {
 };
 
 const customTextPlugin = plugin(({ addUtilities }) => {
-  const newUtilities: Record<string, any> = {};
+  const newUtilities: Record<string, Record<string, string>> = {};
 
   for (const [sizeName, sizeVar] of Object.entries(textSizes)) {
     for (const [weightName, weightVar] of Object.entries(fontWeights)) {

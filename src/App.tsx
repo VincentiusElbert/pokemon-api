@@ -1,4 +1,5 @@
 import { Link, Route, Routes } from "react-router-dom";
+import CreatorBadge from "./components/CreatorBadge";
 import Home from "./pages/Home";
 import PokemonDetail from "./pages/pokemon-detail";
 import Navbar from "./pages/navbar";
@@ -21,11 +22,14 @@ function NotFound() {
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/pokemon/:pokemonName" element={<PokemonDetail />} />
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+    <>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/pokemon/:pokemonName" element={<PokemonDetail />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+      <CreatorBadge />
+    </>
   );
 }
 

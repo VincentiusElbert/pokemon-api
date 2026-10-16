@@ -17,6 +17,8 @@ export type Filters = {
 };
 
 const PAGE = 24;
+// Auto-load while scrolling up to this many, then switch to the button so the footer stays reachable
+const AUTO_LOAD_LIMIT = 96;
 
 type Props = {
   entries: IndexEntry[] | null;
@@ -61,7 +63,7 @@ export const ListPokemon = ({ entries, error, onRetry, filters, onChange, onRese
     const el = sentinel.current;
     if (!el) return;
     const observer = new IntersectionObserver(
-      ([entry]) => entry.isIntersecting && setCount((c) => Math.min(c + PAGE, results.length)),
+      ([entry]) => entry.isIntersecting && setCount((c) => (c < AUTO_LOAD_LIMIT ? Math.min(c + PAGE, results.length) : c)),
       { rootMargin: "400px" },
     );
     observer.observe(el);

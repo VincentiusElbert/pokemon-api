@@ -71,24 +71,25 @@ const Home = () => {
         {/* Cloud + decorations */}
         <div className="pointer-events-none absolute bottom-0 left-0 z-10 w-full overflow-hidden">
           <img src="/cloud-1.png" alt="" className="w-full object-cover" />
+          {/* The trainer (Vincentius) with his team, standing on the clouds */}
           <img
-            src="/pokemon-1.png"
-            alt=""
-            className="absolute bottom-0 -z-10 animate-[float_6s_ease-in-out_infinite]"
+            src="/hero-buzzwole.png"
+            alt="Buzzwole"
+            className="absolute -z-10 h-auto animate-[float_6s_ease-in-out_infinite]"
             style={{
-              width: "clamp(10.06rem, 19.2vw, 17.38rem)",
-              height: "clamp(10.06rem, 19.2vw, 17.38rem)",
-              left: "clamp(1.19rem, 3.6vw, 3.19rem)",
+              width: "clamp(9rem, 19.5vw, 17.5rem)",
+              left: "clamp(0.75rem, 4vw, 4rem)",
+              bottom: "clamp(0.5rem, 2.2vw, 2rem)",
             }}
           />
           <img
-            src="/pokemon-2.png"
-            alt=""
-            className="absolute bottom-0 -z-10 animate-[float_6s_1.5s_ease-in-out_infinite]"
+            src="/hero-trainer.png"
+            alt="Vincentius Elbert with Totodile"
+            className="absolute -z-10 h-auto animate-[float_6s_1.5s_ease-in-out_infinite]"
             style={{
-              width: "clamp(10.06rem, 19.2vw, 17.38rem)",
-              height: "clamp(10.06rem, 19.2vw, 17.38rem)",
-              right: "clamp(1.19rem, 3.6vw, 3.19rem)",
+              width: "clamp(10rem, 22vw, 20rem)",
+              right: "clamp(0.75rem, 4vw, 4rem)",
+              bottom: "clamp(0.5rem, 2.2vw, 2rem)",
             }}
           />
         </div>
